@@ -4,7 +4,7 @@ import 'firebase/compat/firestore';
 import * as echarts from 'echarts';
 import '../src/styles.css';
 
-
+//API key and firebase configuration for authorizing read from db
 const firebaseConfig = {
   apiKey: "AIzaSyAqIk5Izfobu_VWoxMjKA0DkIyyDQOgv7o",
   authDomain: "codeexamdata.firebaseapp.com",
@@ -19,6 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+//test connection
 if (firebase.app()) {
   console.log('Firebase SDK is initialized');
 } else {
@@ -36,7 +37,8 @@ var y2values = [];
 var option2;
 var selectedName = '';
 
-
+//get data from db for 1 chart
+//chartDataList for testing/outputting to console
 async function getData(chartDataList, setChartDataList){
 
   const unsubscribe = firebase.firestore()
@@ -63,6 +65,7 @@ async function getData(chartDataList, setChartDataList){
 
 }
 
+//get data from db for 2nd chart, slightly different method than getData for first chart
 async function getData2(name, setYears, setPoints, setAssists){
 
   const db = firebase.firestore();
@@ -76,39 +79,41 @@ async function getData2(name, setYears, setPoints, setAssists){
 }
 
 
-
+//App main function, returns html for front end
 function App() {
 
-  // Declare a state variable to store the chart data list
+  // state variable to store the chart data list
   const [chartDataList, setChartDataList] = useState([]);
 
+  //storing currently selected button for chart 2
   const [selectedButton, setSelectedButton] = useState(xvalues[0]);
   
+  //chart 2 data
   const [years, setYears] = useState([]);
   const [points, setPoints] = useState([]);
   const [assists, setAssists] = useState([]);
 
+  //get selected button when one of the player buttons are pressed
   const handleButtonClick = (event) => {
     setSelectedButton(event.target.textContent);
     selectedName = event.target.textContent;
     console.log(selectedName);
   };
 
+  //call function for getting chart 2 data when a player button is pressed
   useEffect(() => {
     getData2(selectedName, setYears, setPoints, setAssists);
     console.log(years, points, assists)
   }, [selectedButton]);
 
+  //test in console when new data for chart 2 is obtained
   useEffect(() => {
     console.log("years changed:", years)
     console.log("points:", points)
-    //years.forEach(value => timeXvalues.push(value))
-    //points.forEach(value => timeY1values.push(value))
     console.log("points[0]:", points[0])
   }, [years]);
 
-  // Use the useEffect hook to fetch data from the "chartData" collection in Firestore
-  // and store it in the chartDataList state variable
+  // useEffect hook to call getData 
   useEffect(() => {
     getData(chartDataList, setChartDataList);
   }, []);
@@ -116,11 +121,11 @@ function App() {
  
   //create 1st chart
   useEffect(() => {
-
+    //initialize echart
     const chart = echarts.init(document.getElementById('chart1'));
     
     
-    
+    //creating chart 1
     option = {
       
       title: {
@@ -147,6 +152,7 @@ function App() {
         top: '3%',
         right: '2%'
       },
+      //xaxis made from all players in db
       xAxis: {
         type: 'category',
         data: xvalues,
@@ -163,6 +169,7 @@ function App() {
         type: 'value',
        
       },
+      //two bars for each player, points and assists
       series: [
         {
           data: y1values,
@@ -185,8 +192,9 @@ function App() {
       ],
       
     };
-    chart.setOption(option);
+    chart.setOption(option); //create teh chart with option values 
 
+    //resize font size for x axis names when window is resized so names fit 
     window.addEventListener('resize', () =>{
       const width = window.innerWidth;
       console.log(width)
@@ -200,7 +208,7 @@ function App() {
       chart.resize();
     });
 
-
+    //disposing previously created chart so updated chart can render
     return () => {
       chart.dispose();
     };
@@ -209,11 +217,10 @@ function App() {
 
   //create 2nd chart
   useEffect(() => {
-
+    //initialize echart
     const chart2 = echarts.init(document.getElementById('chart2'));
-    //const chartElement = chart2.getDom();
-    //const boundRectangle = chartElement.getBoundingClientRect();
-    
+
+    //line graph
     option2 = {
       title: {
         text: "Season Points & Assist Totals:\n" + selectedName,
@@ -238,6 +245,7 @@ function App() {
         bottom: '3%',
         containLabel: true
       },
+      //x axis is made of player seasons 
       xAxis: {
         
         boundaryGap: false,
@@ -246,6 +254,7 @@ function App() {
       yAxis: {
         type: 'value'
       },
+      //2 lines, season points and assists
       series: [
         {
           name: 'Assists',
@@ -274,7 +283,7 @@ function App() {
     
   }, [points]);
 
-/* Render a list of chart data documents by mapping over the chartDataList array*/
+  //return html for app, styles gotten from styles.css file
   return (
     
     <div className='body'>
