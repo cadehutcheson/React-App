@@ -1,0 +1,6 @@
+{
+    "firebase": "firebase",
+    "dependencies": {
+      "firebase": "^7.14.6"
+    }
+  }
