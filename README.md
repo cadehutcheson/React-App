@@ -9,3 +9,5 @@ The first chart is a bar chart that displays the total career point and assist v
 The second chart is a line graph that plots a player’s season totals for points and assists. The app creates buttons for all players entered into the database so a graph can be rendered for a selected player. Within the 'timeData' collection of the database, the app finds the document with the "name" field matching the name of the selected player, and then fetches the 3 arrays(seasons, points, assists) within that document. 
 
 Link to Firebase: https://console.firebase.google.com/u/0/project/codeexamdata/overview
+
+Link to Demo Video: https://youtu.be/gZHquHYffRg
